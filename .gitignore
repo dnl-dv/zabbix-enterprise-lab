@@ -1,1 +1,39 @@
+# ==========================================
+# 1. Chaves de Criptografia do Zabbix (PSK e Certificados)
+# ==========================================
+*.psk
+*.key
+*.pem
+*.crt
+secret.psk
+zabbix_agentd.psk
 
+# ==========================================
+# 2. Chaves de Acesso Remoto (SSH / PuTTY)
+# ==========================================
+*.ppk
+id_rsa*
+id_ed25519*
+*.pub
+
+# ==========================================
+# 3. Senhas, Variáveis de Ambiente e IPs Reais
+# ==========================================
+.env
+*.env
+.my.cnf
+my.cnf
+*credentials*
+*secret*
+ips_privados.txt
+anotacoes_senhas.txt
+
+# ==========================================
+# 4. Backups de Edição e Arquivos Temporários de Sistema
+# ==========================================
+*.bak
+*.orig
+*.swp
+*~
+.DS_Store
+Thumbs.db
