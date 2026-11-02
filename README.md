@@ -101,3 +101,31 @@ zabbix-enterprise-lab/
 ├── templates/         # Templates customizados (.yaml) e Mapa de Topologia NOC (.json)
 ├── scripts/           # Scripts de automação em Python (LLD de serviços) e Bash (Check SSL)
 └── docs/evidencias/   # Capturas de tela dos dashboards, mapas, logs e testes de incidente
+```
+---
+
+## 🛠️ Como Reproduzir o Lab
+
+Se você deseja clonar e utilizar este repositório como guia de referência para replicar o seu próprio ambiente de monitoramento corporativo, siga os passos abaixo:
+
+### 1. Clonar o Repositório
+Abra o terminal na sua máquina local e clone o repositório do projeto:
+```bash
+git clone (https://github.com/dnl-dv/zabbix-enterprise-lab.git)
+cd zabbix-enterprise-lab
+```
+### 2. Utilizar os Arquivos de Configuração
+Navegue até a pasta [configs/](#configs/) para consultar os modelos higienizados de configuração do Zabbix Server e dos Agentes (Linux/Windows).
+
+Lembre-se de ajustar os parâmetros locais, substituir as chaves PSK e inserir os endereços IP correspondentes à sua infraestrutura antes de aplicar os arquivos nos servidores.
+
+### 3. Importar os Templates e Topologias
+Acesse a interface web do seu Zabbix 7.0 LTS.
+
+Vá em **Data collection** > **Templates** > **Import** e selecione os arquivos disponíveis na pasta [templates/](#templates/) para carregar os itens, triggers e protótipos de gráficos customizados.
+
+Importe o mapa de rede em formato `.json` na seção **Monitoring > Maps**.
+
+### 4. Executar os Scripts de Automação
+Utilize os códigos disponíveis na pasta [scripts/](#script/) para implementar a descoberta automática de serviços via LLD (*Low-Level Discovery*) e o monitoramento de certificados SSL nos seus nós de borda.
+
