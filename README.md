@@ -100,7 +100,7 @@ zabbix-enterprise-lab/
 ├── configs/           # Arquivos .conf higienizados do Zabbix Server e Agentes (Linux/Windows)
 ├── templates/         # Templates customizados (.json) e Mapa de Topologia NOC (.yaml)
 ├── scripts/           # Scripts de automação em Python (LLD de serviços) e Bash (Check SSL)
-└── docs/evidencias/   # Capturas de tela dos dashboards, mapas, logs e testes de incidente
+└── docs/images/   # Capturas de tela dos dashboards, mapas, logs e testes de incidente
 ```
 ---
 
