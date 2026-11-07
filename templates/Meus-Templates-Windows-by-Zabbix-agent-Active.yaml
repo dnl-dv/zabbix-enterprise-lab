@@ -1,0 +1,260 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 1f695926004b49159e2b13fe4ea5363e
+      name: 'Meus Templates'
+  templates:
+    - uuid: 6679e428dc3b4eb6b3036de18a804809
+      template: 'Meus Templates Windows by Zabbix agent Active'
+      name: 'Meus Templates Windows by Zabbix agent Active'
+      description: 'Meus Templates Linux by Zabbix agent'
+      groups:
+        - name: 'Meus Templates'
+      items:
+        - uuid: 9d7fbeb619e94da0a618835485b26f96
+          name: 'Zabbix Agent Ping'
+          type: ZABBIX_ACTIVE
+          key: agent.ping
+          tags:
+            - tag: component
+              value: health
+            - tag: component
+              value: network
+            - tag: component
+              value: system
+        - uuid: 7803ac0c1b4146419da888fb857a4c8b
+          name: 'Falha no Login'
+          type: ZABBIX_ACTIVE
+          key: 'eventlog[Security,,,,4625,,skip]'
+          value_type: LOG
+          trends: '0'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var lines = value.split('\n')
+                  var lineZero = lines[0]
+                  var accountName = ''
+                  lines.forEach(function (line) {
+                    if (line.trim().substring(0, 14) === 'Nome da conta:') {
+                      accountName = line.substring(15).trim()
+                    }
+                  })
+                  return accountName + ' : ' + lineZero
+          tags:
+            - tag: class
+              value: os
+            - tag: component
+              value: security
+          triggers:
+            - uuid: 2214aa246e07416da26f33b887cac3fe
+              expression: 'logeventid(/Meus Templates Windows by Zabbix agent Active/eventlog[Security,,,,4625,,skip])=1'
+              name: 'Falha no Login'
+              priority: DISASTER
+              manual_close: 'YES'
+        - uuid: 2d433e6eff29414191803e425f0aa2ec
+          name: 'Number of processes'
+          type: ZABBIX_ACTIVE
+          key: proc.num
+          tags:
+            - tag: class
+              value: os
+            - tag: component
+              value: system
+            - tag: target
+              value: windows
+        - uuid: 1c201774b363488a9e1f7287e708f276
+          name: 'Number of CPUs'
+          type: ZABBIX_ACTIVE
+          key: system.cpu.num
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: cpu
+            - tag: component
+              value: os
+        - uuid: 1435e4d7f8724f5ea6b5e2af532dbc56
+          name: 'CPU utilization'
+          type: ZABBIX_ACTIVE
+          key: system.cpu.util
+          value_type: FLOAT
+          units: '%'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: 18794564ed8946718a1563eecc15afb3
+          name: 'CPU Utilization (1m)'
+          type: ZABBIX_ACTIVE
+          key: 'system.cpu.util[,,avg1]'
+          value_type: FLOAT
+          units: '%'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: bdbf9cc197f14e2ab77caeef32fd82a5
+          name: 'CPU Utilization (5m)'
+          type: ZABBIX_ACTIVE
+          key: 'system.cpu.util[,,avg5]'
+          value_type: FLOAT
+          units: '%'
+          tags:
+            - tag: component
+              value: cpu
+          triggers:
+            - uuid: 49aac4579e0c4ffe83a1bd3c48db2051
+              expression: 'last(/Meus Templates Windows by Zabbix agent Active/system.cpu.util[,,avg5])>15'
+              name: 'High CPU Usage 15% for 5 minutes'
+              priority: WARNING
+        - uuid: 58c3d0795a3b4a87898cc7cca3f9abf8
+          name: 'CPU Utilization (15m)'
+          type: ZABBIX_ACTIVE
+          key: 'system.cpu.util[,,avg15]'
+          value_type: FLOAT
+          units: '%'
+          tags:
+            - tag: component
+              value: cpu
+        - uuid: 7d13675364744cffbebf80676113b6dc
+          name: 'Free swap space'
+          type: ZABBIX_ACTIVE
+          key: 'system.swap.size[,free]'
+          units: B
+          description: 'The free space of the swap volume/file expressed in bytes.'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: storage
+        - uuid: e73f890114654bae9492f5857071537e
+          name: 'Free swap space in %'
+          type: ZABBIX_ACTIVE
+          key: 'system.swap.size[,pfree]'
+          value_type: FLOAT
+          units: '%'
+          description: 'The free space of the swap volume/file expressed in %.'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: storage
+        - uuid: e81d2e2a87ba4ba09f0a3f991b0bddf0
+          name: 'Total swap space'
+          type: ZABBIX_ACTIVE
+          key: 'system.swap.size[,total]'
+          units: B
+          description: 'The total space of the swap volume/file expressed in bytes.'
+          tags:
+            - tag: component
+              value: memory
+            - tag: component
+              value: storage
+        - uuid: d9013d0f437f4104976bfcaa945d891b
+          name: 'System uptime'
+          type: ZABBIX_ACTIVE
+          key: system.uptime
+          delay: 30s
+          trends: '0'
+          units: uptime
+          description: 'The system uptime expressed in the following format: "N days, hh:mm:ss".'
+          tags:
+            - tag: component
+              value: system
+        - uuid: 2f3e4e94fb494b6f8f64b9f015cc595e
+          name: 'Free Space'
+          type: ZABBIX_ACTIVE
+          key: 'vfs.fs.size[C:,free]'
+          units: B
+          tags:
+            - tag: component
+              value: storage
+        - uuid: 8c844631c7ae478baa96a5d2a6821f69
+          name: 'Available memory'
+          type: ZABBIX_ACTIVE
+          key: 'vm.memory.size[available]'
+          units: B
+          tags:
+            - tag: component
+              value: memory
+        - uuid: f0288a1ca0bb483da0206dc12456cd22
+          name: 'Free Memory'
+          type: ZABBIX_ACTIVE
+          key: 'vm.memory.size[free]'
+          units: B
+          tags:
+            - tag: component
+              value: memory
+        - uuid: 62c03f992aec4b43b96ea5cea4b6f040
+          name: 'Available memory in %'
+          type: ZABBIX_ACTIVE
+          key: 'vm.memory.size[pavailable]'
+          value_type: FLOAT
+          units: '%'
+          description: 'The available memory as percentage of the total. See also Appendixes in Zabbix Documentation about parameters of the `vm.memory.size` item.'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: 69b98bed29fe4743a68342bee96d2699
+          name: 'Total memory'
+          type: ZABBIX_ACTIVE
+          key: 'vm.memory.size[total]'
+          units: B
+          description: 'Total memory expressed in bytes.'
+          tags:
+            - tag: component
+              value: memory
+        - uuid: 6be52daa2558464db162e860ab7adfba
+          name: 'Memory utilization'
+          type: DEPENDENT
+          key: vm.memory.util
+          delay: '0'
+          value_type: FLOAT
+          units: '%'
+          description: 'The percentage of used memory is calculated as `100-pavailable`.'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'return (100-value);'
+          master_item:
+            key: 'vm.memory.size[pavailable]'
+          tags:
+            - tag: component
+              value: memory
+      tags:
+        - tag: class
+          value: os
+        - tag: target
+          value: windows
+      macros:
+        - macro: '{$CPU.UTIL.CRIT}'
+          value: '90'
+          description: 'Critical threshold of CPU utilization expressed in %.'
+        - macro: '{$LOAD_AVG_PER_CPU.MAX.WARN}'
+          value: '1.5'
+          description: 'The CPU load per core is considered sustainable. If necessary, it can be tuned.'
+  graphs:
+    - uuid: b84833424afd47d68bba93a20d037f7b
+      name: 'CPU Utilization'
+      graph_items:
+        - sortorder: '1'
+          color: '274482'
+          calc_fnc: ALL
+          item:
+            host: 'Meus Templates Windows by Zabbix agent Active'
+            key: 'system.cpu.util[,,avg5]'
+        - sortorder: '2'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: 'Meus Templates Windows by Zabbix agent Active'
+            key: 'system.cpu.util[,,avg15]'
+    - uuid: edd33e2ee1f74ca19d198a433b8e8165
+      name: Memory
+      graph_items:
+        - color: 1A7C11
+          calc_fnc: ALL
+          item:
+            host: 'Meus Templates Windows by Zabbix agent Active'
+            key: 'vm.memory.size[free]'
