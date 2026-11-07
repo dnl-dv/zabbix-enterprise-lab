@@ -18,3 +18,8 @@ Esta pasta reúne os arquivos de configuração do **Zabbix Server** e dos **Age
 openssl rand -hex 32 > /home/zabbix/secret.psk
 chown zabbix:zabbix /home/zabbix/secret.psk
 chmod 640 /home/zabbix/secret.psk
+```
+2. Reinicie o agente após apontar o caminho da chave no arquivo de configuração:
+```bash
+sudo systemctl restart zabbix-agent
+```
