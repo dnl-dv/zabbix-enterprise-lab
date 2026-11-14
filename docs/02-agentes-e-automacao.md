@@ -127,7 +127,35 @@ Include=C:\Program Files\Zabbix Agent 2\zabbix_agent2.d\
 Após salvar o arquivo no Bloco de Notas (executado como Administrador), o serviço **Zabbix Agent 2** foi reiniciado pelo console de serviços do Windows (`services.msc` ou via PowerShell):
 ```powershell
 Restart-Service -Name "Zabbix Agent 2"
+
 ```
+
+---
+
+## ⚡ Passo 5: Automação de Cadastro com Auto Registration
+
+Para eliminar o trabalho manual de cadastrar cada host na interface web, foram configuradas regras de **Auto Registration** baseadas no valor enviado pela diretiva `HostMetadata` quando o agente se conecta pela primeira vez na porta `10051`.
+
+### Configuração no Zabbix Frontend
+No menu lateral, acesse **Alerts > Actions > Autoregistration actions** e clique em **Create action**:
+
+#### Regra 1: Onboarding Automático de Servidores Linux
+* **Name:** `Auto Registration - Linux Servers`
+* **Conditions:** `Host metadata` *contains* `linux`
+* **Operations:**
+  1. **Add host** (cadastra o nó automaticamente no inventário).
+  2. **Add to host group:** `Linux servers`.
+  3. **Link templates:** `Linux by Zabbix agent` (ou `Linux by Zabbix agent active`).
+  ![Auto-Registration-Linux-Servers](images/Auto-Registration-Linux-Servers.png)
+
+#### Regra 2: Onboarding Automático de Estações Windows
+* **Name:** `Auto Registration - Windows Workstations`
+* **Conditions:** `Host metadata` *contains* `WindowsDesktop`
+* **Operations:**
+  1. **Add host**
+  2. **Add to host group:** `Windows servers` / `Workstations`.
+  3. **Link templates:** `Windows by Zabbix agent active`.
+  ![Auto-Registration-Windows-Workstations](images/Auto-Registration-Windows-Workstations.png)
 
 ---
 
