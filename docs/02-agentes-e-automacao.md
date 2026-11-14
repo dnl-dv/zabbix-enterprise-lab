@@ -23,9 +23,10 @@ O laboratório foi projetado para validar três cenários distintos de conectivi
 O nó **`HostCloud-A`** reside na mesma Virtual Cloud Network (VCN) do Zabbix Server na Oracle Cloud, permitindo comunicação direta de baixa latência pelo endereço privado `10.0.0.161`.
 
 ### 1. Instalar o pacote do Zabbix Agent no Ubuntu
+![agent-hostcloud-a](images/Agent-Ubuntu-HostCloud-A.png)
 ```bash
-wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-1+ubuntu24.04_all.deb
-sudo dpkg -i zabbix-release_7.0-1+ubuntu24.04_all.deb
+sudo wget https://repo.zabbix.com/zabbix/7.0/ubuntu-arm64/pool/main/z/zabbix-release/zabbix-release_latest_7.0+ubuntu26.04_all.deb
+sudo dpkg -i zabbix-release_latest_7.0+ubuntu26.04_all.deb
 sudo apt update
 sudo apt install -y zabbix-agent
 ```
@@ -53,6 +54,47 @@ No firewall do **`HostCloud-A`**, as portas `ICMP` e `10050/TCP` foram liberadas
 sudo systemctl restart zabbix-agent
 sudo systemctl enable zabbix-agent
 sudo systemctl status zabbix-agent
+```
+
+---
+
+##  Passo 3: Implantação do Zabbix Agent 2 Multi-Cloud (`HostCloud-B`)
+
+O servidor **`HostCloud-B`** (CentOS) simula o monitoramento de uma instância externa comunicando-se pela internet com o domínio `zbx-lab.space` e utilizando o **Zabbix Agent 2** (desenvolvido em Go, com suporte nativo a plugins e checagens concorrentes).
+
+### 1. Adicionar o repositório RPM oficial e instalar o Zabbix Agent 2
+![agent2-hostcloud-b](images/Agent2-CentOS-HostCloud-B.png)
+```bash
+sudo rpm -Uvh https://repo.zabbix.com/zabbix/7.0/centos/8/x86_64/zabbix-release-latest-7.0.el8.noarch.rpm
+sudo dnf clean all
+sudo dnf install -y zabbix-agent2 zabbix-agent2-plugin-*
+```
+
+### 2. Parametrizar o arquivo `/etc/zabbix/zabbix_agent2.conf`
+```bash
+sudo nano /etc/zabbix/zabbix_agent2.conf
+```
+Diretivas ativas configuradas (arquivo higienizado disponível em [`configs/zabbix_agent2_centos.conf`](../configs/zabbix_agent2_centos.conf)):
+```ini
+PidFile=/run/zabbix/zabbix_agent2.pid
+LogFile=/var/log/zabbix/zabbix_agent2.log
+LogFileSize=0
+Server=zbx-lab.space
+ServerActive=zbx-lab.space
+Hostname=HostCloud-B
+HostMetadata=linux
+PluginSocket=/run/zabbix/agent.plugin.sock
+ControlSocket=/run/zabbix/agent.sock
+Include=/etc/zabbix/zabbix_agent2.d/plugins.d/*.conf
+Include=/etc/zabbix/zabbix_agent2.d/*.conf
+```
+
+### 3. Regras de Perímetro e Inicialização
+As portas de entrada `10050/TCP` e `10051/TCP` no **`HostCloud-B`** foram restritas exclusivamente ao IP público do Zabbix Server (`150.136.108.22/32`):
+```bash
+sudo systemctl restart zabbix-agent2
+sudo systemctl enable zabbix-agent2
+sudo systemctl status zabbix-agent2
 ```
 
 ---
