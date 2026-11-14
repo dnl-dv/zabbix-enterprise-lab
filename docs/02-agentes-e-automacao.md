@@ -99,3 +99,35 @@ sudo systemctl status zabbix-agent2
 
 ---
 
+## 🪟 Passo 4: Implantação do Zabbix Agent 2 no Windows (`DESKTOP-SGH3G6V`)
+
+A estação de trabalho Windows (**`DESKTOP-SGH3G6V` / `MEU DESKTOP`**) foi integrada ao laboratório utilizando o instalador oficial MSI do **Zabbix Agent 2 (64-bit)**.
+
+### 1. Parâmetros definidos no Assistente de Instalação (MSI)
+* **Host name:** `DESKTOP-SGH3G6V`
+* **Zabbix server IP/DNS:** `zbx-lab.space`
+* **Agent listen port:** `10050`
+* **Server or Proxy for active checks:** `zbx-lab.space`
+* **Enable PSK:** Habilitado
+* **Add agent location to the PATH:** Habilitado
+
+### 2. Revisão do arquivo `C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf`
+Para acionar o fluxo de descoberta automática e leitura de eventos do Windows, a diretiva `HostMetadata` foi adicionada ao arquivo de configuração (disponível em [`configs/zabbix_agent2_windows.conf`](../configs/zabbix_agent2_windows.conf)):
+```ini
+LogFile=C:\Program Files\Zabbix Agent 2\zabbix_agent2.log
+Server=zbx-lab.space,127.0.0.1
+ServerActive=zbx-lab.space
+Hostname=DESKTOP-SGH3G6V
+HostMetadata=WindowsDesktop
+ControlSocket=\\.\pipe\agent.sock
+Include=.\zabbix_agent2.d\plugins.d\*.conf
+Include=C:\Program Files\Zabbix Agent 2\zabbix_agent2.d\
+```
+
+Após salvar o arquivo no Bloco de Notas (executado como Administrador), o serviço **Zabbix Agent 2** foi reiniciado pelo console de serviços do Windows (`services.msc` ou via PowerShell):
+```powershell
+Restart-Service -Name "Zabbix Agent 2"
+```
+
+---
+
