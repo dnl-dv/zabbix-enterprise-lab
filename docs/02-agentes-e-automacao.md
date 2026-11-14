@@ -99,7 +99,7 @@ sudo systemctl status zabbix-agent2
 
 ---
 
-## 🪟 Passo 4: Implantação do Zabbix Agent 2 no Windows (`DESKTOP-SGH3G6V`)
+##  Passo 4: Implantação do Zabbix Agent 2 no Windows (`DESKTOP-SGH3G6V`)
 
 A estação de trabalho Windows (**`DESKTOP-SGH3G6V` / `MEU DESKTOP`**) foi integrada ao laboratório utilizando o instalador oficial MSI do **Zabbix Agent 2 (64-bit)**.
 
@@ -132,7 +132,7 @@ Restart-Service -Name "Zabbix Agent 2"
 
 ---
 
-## ⚡ Passo 5: Automação de Cadastro com Auto Registration
+##  Passo 5: Automação de Cadastro com Auto Registration
 
 Para eliminar o trabalho manual de cadastrar cada host na interface web, foram configuradas regras de **Auto Registration** baseadas no valor enviado pela diretiva `HostMetadata` quando o agente se conecta pela primeira vez na porta `10051`.
 
@@ -157,5 +157,64 @@ No menu lateral, acesse **Alerts > Actions > Autoregistration actions** e clique
   3. **Link templates:** `Windows by Zabbix agent active`.
   ![Auto-Registration-Windows-Workstations](images/Auto-Registration-Windows-Workstations.png)
 
+---
+
+##  Passo 6: Criptografia Ponta a Ponta com TLS/PSK (256-bit)
+
+Por padrão, a comunicação entre o Zabbix Server e os agentes trafega em texto plano. Para blindar o transporte de métricas e logs contra interceptação em redes públicas, foi implementada criptografia **TLS com Pre-Shared Keys (PSK)**.
+
+### 1. Geração da Chave Hexadecimal de 256 bits nos Hosts Linux
+Em cada servidor Linux (`HostCloud-A` e `HostCloud-B`), foi gerada uma chave criptográfica aleatória de 32 bytes (64 caracteres hexadecimais) via **OpenSSL**:
+```bash
+sudo mkdir -p /home/zabbix
+sudo sh -c "openssl rand -hex 32 > /home/zabbix/secret.psk"
+```
+
+### 2. Hardening de Permissões do Arquivo de Chave
+O Zabbix exige que o arquivo `.psk` seja legível exclusivamente pelo usuário de serviço `zabbix`:
+```bash
+sudo chown zabbix:zabbix /home/zabbix/secret.psk
+sudo chmod 600 /home/zabbix/secret.psk
+```
+![terminal-permissionamento-chave-psk](images/permissionamento-chave-psk.png)
+
+### 3. Ativação das Diretivas TLS nos Arquivos de Configuração dos Agentes
+Nos arquivos `.conf` do Ubuntu, CentOS e Windows, foram adicionados os parâmetros de exigência de criptografia PSK:
+
+* **Nos Agentes Linux (`/etc/zabbix/zabbix_agentd.conf` e `zabbix_agent2.conf`):**
+```ini
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity=HostCloud-A
+TLSPSKFile=/home/zabbix/secret.psk
+```
+
+* **No Agente Windows (`C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf`):**
+```ini
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity=DESKTOP-SGH3G6V
+TLSPSKFile=C:\Program Files\Zabbix Agent 2\secret.psk
+```
+> **Nota de Segurança:** A string definida em `TLSPSKIdentity` trafega sem criptografia durante o *handshake* TLS para identificar qual chave deve ser utilizada; por isso, utiliza-se apenas o identificador do host, enquanto o segredo hexadecimal fica restrito ao arquivo `secret.psk`.
+
+Reinicie o agente após aplicar os parâmetros:
+```bash
+# No Ubuntu (Agente Clássico)
+sudo systemctl restart zabbix-agent
+
+# No CentOS (Agente 2)
+sudo systemctl restart zabbix-agent2
+```
+
+### 4. Vinculação das Chaves PSK no Zabbix Frontend
+1. Acesse **Data collection > Hosts**, clique sobre o host desejado e abra a aba **Encryption**.
+2. Em **Connections to host**, selecione **PSK**.
+3. Em **Connections from host**, marque exclusivamente a caixa **PSK** (desmarcando *No encryption*).
+4. Preencha **PSK identity** exatamente com o nome configurado no agente (ex: `HostCloud-A`, `HostCloud-B` ou `DESKTOP-SGH3G6V`).
+5. No campo **PSK**, cole o hash hexadecimal de 64 caracteres gerado pelo OpenSSL e clique em **Update**.
+
+Ex:
+![Chave-%20PSK-no-Zabbix-Frontend](images/Chave-%20PSK-no-Zabbix-Frontend.png)
 ---
 
