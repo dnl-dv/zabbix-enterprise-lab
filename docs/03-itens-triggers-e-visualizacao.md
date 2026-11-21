@@ -55,3 +55,10 @@ Com os dados chegando em **Monitoring > Latest data**, foram configuradas trigge
 - **Mitigação de *Alert Flapping*:** Ajuste de histerese na expressão de recuperação (*OK event generation*) e permissão de fechamento manual (*Manual close*) em eventos de segurança, evitando abertura e fechamento repetitivo de alertas.
 
 ---
+## 📦 Passo 3: Gráficos Personalizados e Padronização em Templates
+
+1. **Gráficos Customizados (`Graphs`):** Criação de gráficos combinando `Total Memory` vs. `Free Memory` e curvas de `CPU Utilization` (`1m`, `5m` e `15m`) com visualização das linhas de trigger (`Show triggers`).
+2. **Templates Unificados (`Data collection > Templates`):** Consolidação dos itens passivos/ativos, itens dependentes, tags e triggers em templates padronizados separados por sistema operacional.
+3. **Exportação como Código (`YAML`):** Templates exportados e versionados na pasta [`templates/`](../templates/) deste repositório para replicação imediata.
+
+---
