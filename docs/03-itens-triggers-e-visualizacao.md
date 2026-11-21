@@ -38,3 +38,20 @@ Como a estação Windows opera atrás de **CGNAT**, todos os itens mestres foram
 
 ---
 
+## 🚨 Passo 2: Modelagem de Triggers Analíticas e Controle de Flapping
+
+Com os dados chegando em **Monitoring > Latest data**, foram configuradas triggers nas métricas críticas para detecção proativa de indisponibilidade, gargalos de recursos e alterações de segurança:
+
+| Escopo / Métrica | Trigger Configurada | Severidade | Lógica Operacional |
+| :--- | :--- | :--- | :--- |
+| **Conectividade** | **NODATA 60 seconds** (`agent.ping`) | `Disaster` | Dispara alerta crítico se o agente ficar 60 segundos sem comunicação. |
+| **Armazenamento** | **Less than 5GB free** (`vfs.fs.size`) | `High` | Alerta quando o espaço livre em disco cai abaixo de 5 GB (`5000000000` bytes). |
+| **CPU (Média Móvel)** | **High CPU Usage 75% for 2m / 5m** | `Warning` | Avalia médias móveis (`avg5` / `2m`) para evitar falsos positivos em picos curtos. |
+| **Carga Linux** | **Load Average (1m / 5m / 15m)** | `Warning` / `Average` | Monitora saturação da fila de processos em relação ao `Number of CPUs`. |
+| **Segurança /FIM** | **Falha no Login (Event ID 4625)** | `Average` | Alerta imediato sobre tentativas inválidas de autenticação no Windows. |
+
+### Boas Práticas Aplicadas nas Triggers
+- **Macros Dinâmicas:** Uso de `{ITEM.VALUE}` nos títulos de alerta para exibir o valor exato da leitura no momento do incidente.
+- **Mitigação de *Alert Flapping*:** Ajuste de histerese na expressão de recuperação (*OK event generation*) e permissão de fechamento manual (*Manual close*) em eventos de segurança, evitando abertura e fechamento repetitivo de alertas.
+
+---
