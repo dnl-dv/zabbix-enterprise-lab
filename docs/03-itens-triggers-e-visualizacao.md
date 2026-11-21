@@ -38,7 +38,7 @@ Como a estação Windows opera atrás de **CGNAT**, todos os itens mestres foram
 
 ---
 
-## 🚨 Passo 2: Modelagem de Triggers Analíticas e Controle de Flapping
+##  Passo 2: Modelagem de Triggers Analíticas e Controle de Flapping
 
 Com os dados chegando em **Monitoring > Latest data**, foram configuradas triggers nas métricas críticas para detecção proativa de indisponibilidade, gargalos de recursos e alterações de segurança:
 
@@ -55,10 +55,28 @@ Com os dados chegando em **Monitoring > Latest data**, foram configuradas trigge
 - **Mitigação de *Alert Flapping*:** Ajuste de histerese na expressão de recuperação (*OK event generation*) e permissão de fechamento manual (*Manual close*) em eventos de segurança, evitando abertura e fechamento repetitivo de alertas.
 
 ---
-## 📦 Passo 3: Gráficos Personalizados e Padronização em Templates
+##  Passo 3: Gráficos Personalizados e Padronização em Templates
 
 1. **Gráficos Customizados (`Graphs`):** Criação de gráficos combinando `Total Memory` vs. `Free Memory` e curvas de `CPU Utilization` (`1m`, `5m` e `15m`) com visualização das linhas de trigger (`Show triggers`).
 2. **Templates Unificados (`Data collection > Templates`):** Consolidação dos itens passivos/ativos, itens dependentes, tags e triggers em templates padronizados separados por sistema operacional.
 3. **Exportação como Código (`YAML`):** Templates exportados e versionados na pasta [`templates/`](../templates/) deste repositório para replicação imediata.
+
+---
+##  Passo 4: Dashboards e Mapa Topológico de Rede (Network Map)
+
+1. **Template e Global Dashboards:** Painéis consolidando incidentes ativos (*Problems*), disponibilidade geral dos hosts e tendências históricas.
+2. **Mapa Topológico do NOC (`Monitoring > Maps`):**
+   - Representação completa da arquitetura na **Oracle Cloud (OCI)** e da conexão remota com a **Network A (CGNAT)**.
+   - Documentação visual de **IPs Públicos e Privados**, **modos de coleta** (Passivo vs. Ativo), **portas liberadas** (`22`, `80`, `443`, `3306`, `10050`, `10051`) e **regras de firewall**.
+   - Ícones vinculados dinamicamente aos hosts: qualquer trigger acionada altera a cor e o status do nó no mapa em tempo real.
+
+![Mapa de Topologia Zabbix NOC](./images/zabbix-network-map.png)
+
+---
+## 📧 Passo 5: Canais de Notificação (Media Types & Actions)
+
+1. **Media Type (`Alerts > Media types > Email`):** Configuração de servidor **SMTP** com criptografia TLS/SSL e validação de envio pelo botão **Test**.
+2. **Perfil de Usuário (`Users > Admin > Media`):** Vinculação do destinatário e filtro por severidade (`Warning`, `Average`, `High` e `Disaster`).
+3. **Ações de Disparo (`Alerts > Actions > Trigger actions`):** Ativação da regra *Report problems to Zabbix administrators* com mensagens de abertura e recuperação (*Recovery*).
 
 ---
