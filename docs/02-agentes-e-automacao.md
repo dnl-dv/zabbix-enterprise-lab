@@ -6,11 +6,11 @@ Documentação técnica passo a passo da expansão do laboratório para o monito
 
 ##  Passo 1: Arquitetura de Conectividade dos Agentes (Passivo vs. Ativo)
 
-O laboratório foi projetado para validar três cenários distintos de conectividade corporativa que se comunicam com o **Zabbix Server (`zbx-lab.space` / `203.0.113.10` / `192.0.2.10`)**:
+O laboratório foi projetado para validar três cenários distintos de conectividade corporativa que se comunicam com o **Zabbix Server (`zbx-lab.space` / `203.0.113.10` / `<IP_ZABBIX_SERVER>`)**:
 
 | Hostname | Sistema Operacional | Tipo de Agente | Topologia de Rede | Modo de Operação | Metadado (`HostMetadata`) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`HostCloud-A`** | Ubuntu 26.04 LTS | Zabbix Agent (Clássico) | Rede Privada OCI (`192.0.2.20`) | Híbrido (Passivo + Ativo via IP Privado) | `linux` |
+| **`HostCloud-A`** | Ubuntu 26.04 LTS | Zabbix Agent (Clássico) | Rede Privada OCI (`<IP_PRIVADO_HOST_A>`) | Híbrido (Passivo + Ativo via IP Privado) | `linux` |
 | **`HostCloud-B`** | CentOS 8 / Stream | Zabbix Agent 2 | Nuvem Externa / IP Público (`203.0.113.30`) | Híbrido (Passivo + Ativo via FQDN) | `linux` |
 | **`WIN-WORKSTATION-01`** | Windows 10 | Zabbix Agent 2 | Rede Doméstica / Corporativa sob **CGNAT** (`198.51.100.10`) | **100% Ativo** (Inicia conexão na porta `10051`) | `WindowsDesktop` |
 
@@ -20,7 +20,7 @@ O laboratório foi projetado para validar três cenários distintos de conectivi
 
 ##  Passo 2: Implantação do Agente Linux em Rede Local (`HostCloud-A`)
 
-O nó **`HostCloud-A`** reside na mesma Virtual Cloud Network (VCN) do Zabbix Server na Oracle Cloud, permitindo comunicação direta de baixa latência pelo endereço privado `192.0.2.10`.
+O nó **`HostCloud-A`** reside na mesma Virtual Cloud Network (VCN) do Zabbix Server na Oracle Cloud, permitindo comunicação direta de baixa latência pelo endereço privado `<IP_ZABBIX_SERVER>`.
 
 ### 1. Instalar o pacote do Zabbix Agent no Ubuntu
 ![agent-hostcloud-a](images/Agent-Ubuntu-HostCloud-A.png)
@@ -41,15 +41,15 @@ Diretivas ativas configuradas (arquivo higienizado disponível em [`configs/zabb
 PidFile=/run/zabbix/zabbix_agentd.pid
 LogFile=/var/log/zabbix/zabbix_agentd.log
 LogFileSize=0
-Server=192.0.2.10
-ServerActive=192.0.2.10
+Server=<IP_ZABBIX_SERVER>
+ServerActive=<IP_ZABBIX_SERVER>
 Hostname=HostCloud-A
 HostMetadata=linux
 Include=/etc/zabbix/zabbix_agentd.d/*.conf
 ```
 
 ### 3. Liberar o Firewall e habilitar o serviço
-No firewall do **`HostCloud-A`**, as portas `ICMP` e `10050/TCP` foram liberadas exclusivamente para o IP privado do Zabbix Server (`192.0.2.10/32`):
+No firewall do **`HostCloud-A`**, as portas `ICMP` e `10050/TCP` foram liberadas exclusivamente para o IP privado do Zabbix Server (`<IP_ZABBIX_SERVER>/32`):
 ```bash
 sudo systemctl restart zabbix-agent
 sudo systemctl enable zabbix-agent
@@ -224,7 +224,7 @@ Com a criptografia ativa nos dois lados, a comunicação foi validada diretament
 
 ```bash
 # Testar coleta criptografada com PSK a partir do servidor
-zabbix_get -s 192.0.2.20 -p 10050 -k "system.cpu.load[all,avg1]" \
+zabbix_get -s <IP_PRIVADO_HOST_A> -p 10050 -k "system.cpu.load[all,avg1]" \
   --tls-connect=psk \
   --tls-psk-identity="HostCloud-A" \
   --tls-psk-file=/home/zabbix/secret.psk
