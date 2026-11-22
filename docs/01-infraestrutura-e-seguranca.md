@@ -11,7 +11,7 @@ O ambiente foi planejado para operar em regime contínuo (24/7) com alta disponi
 * **Migração de Ambiente:** Os testes iniciais ocorreram na Vultr durante o período de avaliação gratuito e, em seguida, toda a arquitetura foi reconstruída do zero de forma definitiva na **Oracle Cloud Infrastructure (OCI)**.
 * **Região e Instância:** Região `US East (Ashburn)`, instância nomeada `zabbix-course` sob o shape **VM.Standard.A1.Flex** (1 OCPU e 6 GB de RAM).
 * **Sistema Operacional e Arquitetura:** Ubuntu 26.04.1 LTS Minimal em arquitetura ARM64 (`aarch64`) com Kernel Linux `7.0.0-1009-oracle`.
-* **Endereçamento de Rede:** IP Privado `192.0.2.10` e IP Público `203.0.113.10`, com administração remota via protocolo SSH utilizando o cliente **PuTTY**.
+* **Endereçamento de Rede:** IP Privado `<IP_ZABBIX_SERVER>` e IP Público `203.0.113.10`, com administração remota via protocolo SSH utilizando o cliente **PuTTY**.
 
 ### Validação da Arquitetura no Terminal
 Após estabelecer a conexão via SSH, o comando abaixo foi executado para confirmar a versão do sistema operacional e a arquitetura do processador antes do download dos pacotes:
@@ -177,10 +177,10 @@ A segurança de perímetro foi estabelecida combinando as **Security Lists / Net
 
 | Porta | Protocolo | Serviço | Origem Autorizada | Finalidade na Arquitetura |
 | :--- | :--- | :--- | :--- | :--- |
-| **22** | TCP | SSH | `198.51.100.10/32` | Administração remota segura via terminal (PuTTY) |
-| **80** | TCP | HTTP | `198.51.100.10/32` | Validação do Certbot e redirecionamento automático para HTTPS |
-| **443** | TCP | HTTPS | `198.51.100.10/32` | Acesso criptografado ao Zabbix Frontend, Grafana e API |
-| **10051** | TCP | Zabbix Trapper | `198.51.100.10/32` e Hosts | Recebimento de coletas ativas e Auto Registration dos Agentes |
+| **22** | TCP | SSH | `<SEU_IP>/32` | Administração remota segura via terminal (PuTTY) |
+| **80** | TCP | HTTP | `<SEU_IP>/32` | Validação do Certbot e redirecionamento automático para HTTPS |
+| **443** | TCP | HTTPS | `<SEU_IP>/32` | Acesso criptografado ao Zabbix Frontend, Grafana e API |
+| **10051** | TCP | Zabbix Trapper | `<SEU_IP>/32` e Hosts | Recebimento de coletas ativas e Auto Registration dos Agentes |
 
 ### Comandos de Diagnóstico e Validação da Fundação
 ```bash
