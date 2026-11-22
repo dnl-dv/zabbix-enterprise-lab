@@ -218,7 +218,7 @@ Ex:
 ![Chave-%20PSK-no-Zabbix-Frontend](images/Chave-%20PSK-no-Zabbix-Frontend.png)
 ---
 
-## 🧪 Passo 7: Testes de Conectividade Criptografada e Diagnóstico
+##  Passo 7: Testes de Conectividade Criptografada e Diagnóstico
 
 Com a criptografia ativa nos dois lados, a comunicação foi validada diretamente pelo terminal do Zabbix Server utilizando o utilitário `zabbix_get` com parâmetros TLS:
 
@@ -233,8 +233,8 @@ zabbix_get -s <IP_PRIVADO_HOST_A> -p 10050 -k "system.cpu.load[all,avg1]" \
 sudo tail -f /var/log/zabbix/zabbix_agentd.log
 sudo tail -f /var/log/zabbix/zabbix_agent2.log
 ```
-![images/testes-de-conectividade-criptografada-e-diagnóstico-host-a](images/testes-de-conectividade-criptografada-e-diagnóstico-host-a.jpeg)
-![images/testes-de-conectividade-criptografada-e-diagnóstico-host-b](images/testes-de-conectividade-criptografada-e-diagnóstico-host-b.jpeg)
+![images/testes-de-conectividade-criptografada-e-diagnóstico-host-a](images/testes-de-conectividade-criptografada-e-diagnóstico-host-a.png)
+![images/testes-de-conectividade-criptografada-e-diagnóstico-host-b](images/testes-de-conectividade-criptografada-e-diagnóstico-host-b.png)
 ---
 
 ⬅️ [Módulo Anterior: Fundação, Infraestrutura e Segurança](./01-infraestrutura-e-seguranca.md) | 🏠 [Voltar para o README Principal](../README.md)
