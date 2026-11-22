@@ -329,10 +329,10 @@ zabbix_export:
           text: |
             HostCloud-A
             Ubuntu 26.04 LTS
-            Public IP: 203.0.113.20 Private IP: 192.0.2.20
+            Public IP: 203.0.113.20 Private IP: <IP_PRIVADO_HOST_A>
             
-            Incoming Ports ICMP:192.0.2.10/32
-            10050: 192.0.2.10/32 SSH (22): 198.51.100.10/32
+            Incoming Ports ICMP:<IP_ZABBIX_SERVER>/32
+            10050: <IP_ZABBIX_SERVER>/32 SSH (22): <SEU_IP>/32
           font: '9'
           font_size: '14'
           font_color: FFFFFF
@@ -405,8 +405,8 @@ zabbix_export:
             Ubuntu 26.04 LTS
             zbx-lab.space 
             Public IP: 203.0.113.10 
-            Private IP: 192.0.2.10
-            Incoming Ports (22, 80, 443, 10051) : 198.51.100.10/32
+            Private IP: <IP_ZABBIX_SERVER>
+            Incoming Ports (22, 80, 443, 10051) : <SEU_IP>/32
           font: '9'
           font_size: '14'
           font_color: FFFFFF
@@ -426,7 +426,7 @@ zabbix_export:
             HostCloud-B 
             CentOS 8 
             Public IP: 203.0.113.30
-            Incoming Ports 10050/10051: 203.0.113.10/32 SSH (22): 198.51.100.10/32
+            Incoming Ports 10050/10051: 203.0.113.10/32 SSH (22): <SEU_IP>/32
           font: '9'
           font_size: '15'
           font_color: FFFFFF
