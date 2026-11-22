@@ -497,7 +497,7 @@ zabbix_export:
           linktriggers: {  }
         - drawtype: '0'
           color: 00CC00
-          label: 192.0.2.1
+          label: <IP_ZABBIX_SERVER>
           selementid1: '14'
           selementid2: '2'
           linktriggers:
